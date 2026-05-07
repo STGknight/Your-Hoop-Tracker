@@ -6,15 +6,34 @@ import AdminScreen from './screens/AdminScreen.jsx'
 import HomeScreen from './screens/HomeScreen.jsx'
 import LoginScreen from './screens/LoginScreen.jsx'
 import SessionDetailsScreen from './screens/SessionDetailsScreen.jsx'
+import SignUpScreen from './screens/SignUpScreen.jsx'
+import WelcomeScreen from './screens/WelcomeScreen.jsx'
 
-// App owns the MVP state: mock login, selected screen, joined players, and payments.
+// App owns the MVP state: mock auth, selected screen, joined players, and payments.
 function App() {
-  const [activeScreen, setActiveScreen] = useState('login')
+  const [activeScreen, setActiveScreen] = useState('welcome')
+  const [currentUser, setCurrentUser] = useState(null)
   const [run, setRun] = useState(initialRun)
 
-  const hasJoined = run.players.some((player) => player.id === mockUser.id)
+  const hasJoined = currentUser
+    ? run.players.some((player) => player.id === currentUser.id)
+    : false
+
+  function finishMockAuth(userDetails) {
+    setCurrentUser({
+      ...mockUser,
+      ...userDetails,
+      paymentStatus: 'Unpaid',
+    })
+    setActiveScreen('home')
+  }
 
   function handleJoinRun() {
+    if (!currentUser) {
+      setActiveScreen('welcome')
+      return
+    }
+
     if (hasJoined || run.players.length >= run.maxSpots) {
       setActiveScreen('details')
       return
@@ -22,7 +41,7 @@ function App() {
 
     setRun((currentRun) => ({
       ...currentRun,
-      players: [...currentRun.players, mockUser],
+      players: [...currentRun.players, currentUser],
     }))
     setActiveScreen('details')
   }
@@ -42,15 +61,40 @@ function App() {
   }
 
   function renderScreen() {
+    if (activeScreen === 'welcome') {
+      return (
+        <WelcomeScreen
+          onSignUp={() => setActiveScreen('signup')}
+          onLogIn={() => setActiveScreen('login')}
+        />
+      )
+    }
+
+    if (activeScreen === 'signup') {
+      return (
+        <SignUpScreen
+          onBack={() => setActiveScreen('welcome')}
+          onLogIn={() => setActiveScreen('login')}
+          onCreateAccount={finishMockAuth}
+        />
+      )
+    }
+
     if (activeScreen === 'login') {
-      return <LoginScreen onContinue={() => setActiveScreen('home')} />
+      return (
+        <LoginScreen
+          onBack={() => setActiveScreen('welcome')}
+          onSignUp={() => setActiveScreen('signup')}
+          onLogIn={finishMockAuth}
+        />
+      )
     }
 
     if (activeScreen === 'details') {
       return (
         <SessionDetailsScreen
           run={run}
-          currentUser={mockUser}
+          currentUser={currentUser}
           hasJoined={hasJoined}
           onJoinRun={handleJoinRun}
         />
@@ -64,11 +108,11 @@ function App() {
     return <HomeScreen run={run} onJoinRun={handleJoinRun} />
   }
 
+  const isAuthScreen = ['welcome', 'signup', 'login'].includes(activeScreen)
+
   return (
     <AppShell>
-      {activeScreen !== 'login' && (
-        <Header activeScreen={activeScreen} onNavigate={setActiveScreen} />
-      )}
+      {!isAuthScreen && <Header activeScreen={activeScreen} onNavigate={setActiveScreen} />}
       {renderScreen()}
     </AppShell>
   )
