@@ -1,14 +1,7 @@
 // Mock data keeps the MVP simple until Supabase auth and database tables are added.
-export const emptyAuthForm = {
-  name: '',
-  email: '',
-  password: '',
-}
-
-export const initialMockUser = {
+export const mockUser = {
   id: 4,
   name: 'You',
-  email: 'you@example.com',
   paymentStatus: 'Unpaid',
 }
 

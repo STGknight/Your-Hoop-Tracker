@@ -35,7 +35,7 @@ Your-Hoop-Tracker/
 │   │   ├── Header.jsx         # App header and simple screen navigation
 │   │   └── RunCard.jsx        # Reusable card for basketball run summary details
 │   └── screens/
-│       ├── LoginScreen.jsx            # Welcome, sign-up, and log-in mock auth screens
+│       ├── LoginScreen.jsx            # Login/sign-up landing screen
 │       ├── HomeScreen.jsx             # Session list screen showing tonight's run
 │       ├── SessionDetailsScreen.jsx   # Run details and joined player list
 │       └── AdminScreen.jsx            # Confirmed players and payment status toggles
@@ -43,11 +43,10 @@ Your-Hoop-Tracker/
 
 ## Screens Included
 
-1. **Welcome / Sign Up / Log In**
-   - Welcome screen with app name, tagline, Sign Up button, and Log In button
-   - Sign Up form with Name, Email, Password, Create Account, Back, and Log In link
-   - Log In form with Email, Password, Log In, Back, and Sign Up link
-   - Form submission creates a mock current user in local React state
+1. **Login / Sign Up**
+   - App name: Your Hoop Tracker
+   - Tagline: Track runs. Join games. Hoop tonight.
+   - Sign Up and Log In buttons
 2. **Home / Session List**
    - Shows tonight's run with time, location, spots, price, and a Join Run button
 3. **Session Details**

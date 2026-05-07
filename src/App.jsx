@@ -1,31 +1,18 @@
 import { useState } from 'react'
 import AppShell from './components/AppShell.jsx'
 import Header from './components/Header.jsx'
-import { initialMockUser, initialRun } from './data/mockData.js'
+import { initialRun, mockUser } from './data/mockData.js'
 import AdminScreen from './screens/AdminScreen.jsx'
 import HomeScreen from './screens/HomeScreen.jsx'
 import LoginScreen from './screens/LoginScreen.jsx'
 import SessionDetailsScreen from './screens/SessionDetailsScreen.jsx'
 
-// App owns the MVP state: mock auth, selected screen, joined players, and payments.
+// App owns the MVP state: mock login, selected screen, joined players, and payments.
 function App() {
-  const [activeScreen, setActiveScreen] = useState('auth')
-  const [currentUser, setCurrentUser] = useState(null)
+  const [activeScreen, setActiveScreen] = useState('login')
   const [run, setRun] = useState(initialRun)
 
-  const playerForRun = currentUser || initialMockUser
-  const hasJoined = run.players.some((player) => player.id === playerForRun.id)
-
-  function handleMockAuth(formValues) {
-    const mockCurrentUser = {
-      ...initialMockUser,
-      name: formValues.name || initialMockUser.name,
-      email: formValues.email || initialMockUser.email,
-    }
-
-    setCurrentUser(mockCurrentUser)
-    setActiveScreen('home')
-  }
+  const hasJoined = run.players.some((player) => player.id === mockUser.id)
 
   function handleJoinRun() {
     if (hasJoined || run.players.length >= run.maxSpots) {
@@ -35,7 +22,7 @@ function App() {
 
     setRun((currentRun) => ({
       ...currentRun,
-      players: [...currentRun.players, playerForRun],
+      players: [...currentRun.players, mockUser],
     }))
     setActiveScreen('details')
   }
@@ -55,15 +42,15 @@ function App() {
   }
 
   function renderScreen() {
-    if (activeScreen === 'auth') {
-      return <LoginScreen onAuthenticate={handleMockAuth} />
+    if (activeScreen === 'login') {
+      return <LoginScreen onContinue={() => setActiveScreen('home')} />
     }
 
     if (activeScreen === 'details') {
       return (
         <SessionDetailsScreen
           run={run}
-          currentUser={playerForRun}
+          currentUser={mockUser}
           hasJoined={hasJoined}
           onJoinRun={handleJoinRun}
         />
@@ -79,7 +66,7 @@ function App() {
 
   return (
     <AppShell>
-      {activeScreen !== 'auth' && (
+      {activeScreen !== 'login' && (
         <Header activeScreen={activeScreen} onNavigate={setActiveScreen} />
       )}
       {renderScreen()}
